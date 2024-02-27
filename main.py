@@ -16,18 +16,19 @@ player_vel = 5
 apple_width = 30
 apple_height = 30
 
-def draw(player, apple):
+def draw(player, apple, tail):
     window.fill((0, 0, 0))
 
     pygame.draw.rect(window, "green", player)
     pygame.draw.rect(window, "red", apple)
     for segment in tail:
-        pygame.draw.rect(window, "blue", segment)
+        pygame.draw.rect(window, "green", segment)
 
     pygame.display.update()
 
 def eaten(player, apple):
     return player.colliderect(apple)
+
 
 def main():
     run = True
@@ -39,6 +40,8 @@ def main():
     clock = pygame.time.Clock()
 
     move_direction = (0, 0)
+    tail_extension = 3
+
     while run:
         clock.tick(30)
 
@@ -62,12 +65,20 @@ def main():
         if 0 <= player.y + move_direction[1] <= height - player_height:
             player.y += move_direction[1]
 
+        tail.insert(0, player.copy())
+        if len(tail) > 1:
+            tail.pop()
+
 
         if eaten(player, apple):
             apple.x = random.randint(0, width - apple.width)
             apple.y = random.randint(0, height - apple_height)
+            tail_extension += 10
+        while tail_extension > 0:
+            tail.append(pygame.Rect(tail[-1].x, tail[-1].y, player_width, player_height))
+            tail_extension -= 1
 
-        draw(player, apple)
+        draw(player, apple, tail)
 
 
     pygame.quit()
