@@ -2,12 +2,13 @@ import pygame
 import time
 import random
 
-
 pygame.font.init()
 
 width, height = 800, 600
 window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Snake Game")
+
+background = pygame.transform.scale(pygame.image.load("background.jpeg"), (width, height))
 
 player_width = 30
 player_height = 30
@@ -16,8 +17,9 @@ player_vel = 5
 apple_width = 30
 apple_height = 30
 
+
 def draw(player, apple, tail):
-    window.fill((0, 0, 0))
+    window.blit(background, (0, 0))
 
     pygame.draw.rect(window, "green", player)
     pygame.draw.rect(window, "red", apple)
@@ -25,6 +27,7 @@ def draw(player, apple, tail):
         pygame.draw.rect(window, "green", segment)
 
     pygame.display.update()
+
 
 def eaten(player, apple):
     return player.colliderect(apple)
@@ -69,7 +72,6 @@ def main():
         if len(tail) > 1:
             tail.pop()
 
-
         if eaten(player, apple):
             apple.x = random.randint(0, width - apple.width)
             apple.y = random.randint(0, height - apple_height)
@@ -79,7 +81,6 @@ def main():
             tail_extension -= 1
 
         draw(player, apple, tail)
-
 
     pygame.quit()
 
