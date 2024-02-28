@@ -17,7 +17,6 @@ player_vel = 5
 apple_width = 30
 apple_height = 30
 
-
 font = pygame.font.SysFont("comicsans", 30)
 
 
@@ -25,7 +24,7 @@ def draw(player, apple, tail, score):
     window.blit(background, (0, 0))
 
     score_text = font.render(f"Score: {score}", 1, "white")
-    window.blit(score_text, (10,10))
+    window.blit(score_text, (10, 10))
 
     pygame.draw.rect(window, "green", player)
     pygame.draw.rect(window, "red", apple)
@@ -39,18 +38,35 @@ def eaten(player, apple):
     return player.colliderect(apple)
 
 
+def tail_collision(player, tail):
+    for segment in tail[11:]:
+        if player.colliderect(segment):
+            return True
+
+def game_over(score):
+    window.blit(background, (0, 0))
+    game_over_text = font.render("Game Over", 1, "red")
+    score_text = font.render(f"You've got: {score} points", 1, "white")
+
+    window.blit(game_over_text, (width / 2 - game_over_text.get_width() / 2, height / 2 - 40))
+    window.blit(score_text, (width / 2 - score_text.get_width() / 2, height / 2))
+
+    pygame.display.update()
+    pygame.time.delay(3000)
+
+
 def main():
     run = True
 
     player = pygame.Rect(370, 270, player_width, player_height)
     apple = pygame.Rect(370, 170, apple_width, apple_height)
     tail = []
+    tail_extension = 0
     score = 0
 
     clock = pygame.time.Clock()
 
     move_direction = (0, 0)
-    tail_extension = 3
 
     while run:
         clock.tick(30)
@@ -84,10 +100,13 @@ def main():
             apple.y = random.randint(0, height - apple_height)
             tail_extension += 10
             score += 1
-            print(score)
-        while tail_extension > 0:
+        while tail_extension > 0 and len(tail) > 0:
             tail.append(pygame.Rect(tail[-1].x, tail[-1].y, player_width, player_height))
             tail_extension -= 1
+
+        if tail_collision(player, tail):
+            game_over(score)
+            run = False
 
         draw(player, apple, tail, score)
 
