@@ -18,8 +18,14 @@ apple_width = 30
 apple_height = 30
 
 
-def draw(player, apple, tail):
+font = pygame.font.SysFont("comicsans", 30)
+
+
+def draw(player, apple, tail, score):
     window.blit(background, (0, 0))
+
+    score_text = font.render(f"Score: {score}", 1, "white")
+    window.blit(score_text, (10,10))
 
     pygame.draw.rect(window, "green", player)
     pygame.draw.rect(window, "red", apple)
@@ -39,6 +45,7 @@ def main():
     player = pygame.Rect(370, 270, player_width, player_height)
     apple = pygame.Rect(370, 170, apple_width, apple_height)
     tail = []
+    score = 0
 
     clock = pygame.time.Clock()
 
@@ -76,11 +83,13 @@ def main():
             apple.x = random.randint(0, width - apple.width)
             apple.y = random.randint(0, height - apple_height)
             tail_extension += 10
+            score += 1
+            print(score)
         while tail_extension > 0:
             tail.append(pygame.Rect(tail[-1].x, tail[-1].y, player_width, player_height))
             tail_extension -= 1
 
-        draw(player, apple, tail)
+        draw(player, apple, tail, score)
 
     pygame.quit()
 
